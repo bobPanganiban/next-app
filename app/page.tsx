@@ -1,10 +1,6 @@
-import { getServerSession } from "next-auth";
-import { authOptions } from "./api/auth/authOptions";
 import Image from "next/image";
 
 export default async function Home() {
-  const session = await getServerSession(authOptions);
-
   return (
     <main className="relative h-screen">
       <Image
