@@ -1,7 +1,9 @@
+"use client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
 
-const AdminHomePage = () => {
-  return <div>Admin HomePage</div>;
+const AdminPage = () => {
+  return <div>AdminPage</div>;
 };
 
-export default AdminHomePage;
+export default AdminPage;

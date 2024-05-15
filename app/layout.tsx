@@ -26,7 +26,7 @@ export default function RootLayout({
       <body className={roboto.className}>
         <AuthProvider>
           <NavBar />
-          <main className="p-5">{children}</main>
+          <main className="mt-[3px]">{children}</main>
         </AuthProvider>
       </body>
     </html>
