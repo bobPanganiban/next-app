@@ -61,6 +61,7 @@ export async function POST(request: NextRequest) {
       invoiceNumber: body.invoiceNumber,
       customerId: customer.id,
       totalAmount: body.totalAmount,
+      isfulfilled: customer.termId === 1 ? true : false,
       isCompleted: body.transactions.some(
         (transaction: ItemFormEntry) => transaction.supplied !== "ALL"
       ),
@@ -81,14 +82,17 @@ export async function POST(request: NextRequest) {
       });
 
       if (newTransaction.id) {
-        const inventoryEntries = await prisma.inventory.findMany({
-          where: { itemId: newTransaction.itemId },
+        const inventoryEntriesMain = await prisma.inventory.findMany({
+          where: {
+            itemId: newTransaction.itemId,
+            warehouseId: body.warehouseId,
+          },
           orderBy: { price: "asc" },
         });
 
         let quantityToDeduct = newTransaction.quantity;
 
-        for (let inventory of inventoryEntries) {
+        for (let inventory of inventoryEntriesMain) {
           if (quantityToDeduct <= 0) break;
           if (inventory.count >= quantityToDeduct) {
             await prisma.inventory.update({
@@ -101,6 +105,34 @@ export async function POST(request: NextRequest) {
             await prisma.inventory.delete({
               where: { id: inventory.id },
             });
+          }
+        }
+
+        if (quantityToDeduct > 0) {
+          const inventoryEntriesSecondary = await prisma.inventory.findMany({
+            where: {
+              itemId: newTransaction.itemId,
+              warehouseId: {
+                not: body.warehouseId,
+              },
+            },
+            orderBy: { price: "asc" },
+          });
+
+          for (let inventory of inventoryEntriesSecondary) {
+            if (quantityToDeduct <= 0) break;
+            if (inventory.count >= quantityToDeduct) {
+              await prisma.inventory.update({
+                where: { id: inventory.id },
+                data: { count: { decrement: quantityToDeduct } },
+              });
+              quantityToDeduct = 0;
+            } else {
+              quantityToDeduct -= inventory.count;
+              await prisma.inventory.delete({
+                where: { id: inventory.id },
+              });
+            }
           }
         }
 

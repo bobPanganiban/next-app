@@ -1,7 +1,5 @@
 import React from "react";
 import { prisma } from "@/prisma/client";
-import { format } from "date-fns";
-import { useCurrency } from "@/app/hooks/useCurrency";
 import { supplierInvoiceQuery } from "@/app/queries/supplierInvoice";
 import SupplierInvoice from "./SupplierInvoice";
 
@@ -10,7 +8,6 @@ interface Props {
 }
 
 const SupplierInvoiceDownloadPage = async ({ params }: Props) => {
-  const formatCurrency = useCurrency();
   const invoiceDetails = await prisma.supplierInvoices.findUnique(
     supplierInvoiceQuery(params.siid)
   );

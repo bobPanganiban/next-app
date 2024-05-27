@@ -23,7 +23,7 @@ const CheckVoucherDetailPage = async ({ params }: Props) => {
   });
 
   return (
-    <div className="w-[700px]">
+    <div className="w-[770px]">
       <CheckVoucher checkVoucher={checkVoucher as CVInterface} />
     </div>
   );

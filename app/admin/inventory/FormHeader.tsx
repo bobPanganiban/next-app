@@ -23,6 +23,7 @@ const FormHeader = ({ suppliers }: Props) => {
         onChange={(event) => handlerSupplierSelect(event)}
         className="select select-bordered select-xs w-full max-w-xs"
       >
+        <option value={0}>ALL</option>
         {suppliers.map((supplier) => (
           <option key={supplier.id} value={supplier.id}>
             {supplier.name}

@@ -54,20 +54,30 @@ const CustomerInvoicesTable = ({ customerInvoices }: Props) => {
         </thead>
         <tbody>
           {customerInvoices
-            .filter((invoice: CustomerInvoice, index: number) => {
-              let show = showCompleted || !invoice.isfulfilled;
-              let paginated =
-                index >= page * itemPerPage - itemPerPage &&
-                index < itemPerPage * page;
+            .reduce(
+              (
+                acc: CustomerInvoice[],
+                invoice: CustomerInvoice,
+                index: number
+              ) => {
+                let show = showCompleted || !invoice.isfulfilled;
+                let paginated =
+                  index >= page * itemPerPage - itemPerPage &&
+                  index < itemPerPage * page;
 
-              let search =
-                invoiceSearch === ""
-                  ? true
-                  : invoice.invoiceNumber
-                      .toUpperCase()
-                      .includes(invoiceSearch.toUpperCase());
-              return paginated && search && show;
-            })
+                let search =
+                  invoiceSearch === ""
+                    ? true
+                    : invoice.invoiceNumber
+                        .toUpperCase()
+                        .includes(invoiceSearch.toUpperCase());
+                if (paginated && search && show) {
+                  acc.push(invoice);
+                }
+                return acc;
+              },
+              [] as CustomerInvoice[]
+            )
             .map((invoice: CustomerInvoice) => (
               <tr key={invoice.id} className="hover">
                 <td>

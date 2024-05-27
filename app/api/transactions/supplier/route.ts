@@ -10,6 +10,13 @@ export async function POST(request: NextRequest) {
     if (!validation.success)
       return NextResponse.json(validation.error.format(), { status: 400 });
 
+    const supplier = await prisma.suppliers.findUnique({
+      where: { id: body.supplierId },
+      select: {
+        termId: true,
+      },
+    });
+
     // create a new invoice record
     const invoiceData = await prisma.supplierInvoices.create({
       data: {
@@ -17,6 +24,7 @@ export async function POST(request: NextRequest) {
         invoiceNumber: body.invoiceNumber,
         invoiceDate: new Date(body.invoiceDate),
         totalAmount: body.totalAmount,
+        isfulfilled: supplier?.termId === 1 ? true : false,
       },
     });
 

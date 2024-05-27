@@ -65,3 +65,8 @@ export const counterReceiptSchema = z.object({
   customerId: z.number(),
   totalAmount: z.number(),
 });
+
+export const warehouseInvoiceSchema = z.object({
+  warehouseId: z.number(),
+  targetWarehouseId: z.number(),
+});

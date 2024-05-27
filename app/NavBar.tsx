@@ -7,7 +7,7 @@ const NavBar = () => {
   const { status, data: session } = useSession();
 
   return (
-    <nav className="flex justify-between p-5 bg-slate-200 border-b shadow-md">
+    <nav className="flex justify-between p-5 w-full bg-slate-200 border-b shadow-md print:hidden">
       <Link href="/">RoadBuster Warehouse</Link>
       <ul className="flex gap-4">
         <li>{session?.user?.name}</li>

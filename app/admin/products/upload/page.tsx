@@ -11,4 +11,6 @@ const UploadPage = async () => {
   );
 };
 
+export const dynamic = "force-dynamic";
+
 export default UploadPage;

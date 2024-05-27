@@ -33,6 +33,7 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
   );
   const [selectedItem, setSelectedItem] = useState<Item>({} as Item);
   const [selectedBrand, setSelectedBrand] = useState<number>(0);
+  const [isSpecialPrice, setIsSpecialPrice] = useState<boolean>(false);
   const { register, handleSubmit, reset: resetItemSelect } = useForm();
   const { data: brands, isLoading: brandsLoading } = useBrands();
   const { data: items, isLoading: itemsLoading } = useItems();
@@ -229,7 +230,7 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
               </select>
             </label>
           </div>
-          <div className="w-[50%]">
+          <div className="w-[48%]">
             <label className="form-control w-full">
               <div className="label">
                 <span className="label-text">Item</span>
@@ -262,23 +263,23 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
                     >
                       {`${item.desc1} ${item.desc2} ${item.desc3}`}{" "}
                       {item.inventoryCount > 0 ? (
-                        <span>
+                        <>
                           &nbsp;&nbsp;|&nbsp;&nbsp;
                           {`${item.inventoryCount} ${
                             item.inventoryCount > 1
                               ? item.unit.plural.toLowerCase()
                               : item.unit.name.toLowerCase()
                           }`}
-                        </span>
+                        </>
                       ) : (
-                        <i>&nbsp;&nbsp;|&nbsp;&nbsp;no stock</i>
+                        <>&nbsp;&nbsp;|&nbsp;&nbsp;no stock</>
                       )}
                     </option>
                   ))}
               </select>
             </label>
           </div>
-          <div className="w-[10%]">
+          <div className="w-[7%]">
             <label className="form-control w-full ">
               <div className="label">
                 <span className="label-text">Quantity:</span>
@@ -290,53 +291,70 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
               />
             </label>
           </div>
-          <div className="w-[15%]">
+          <div className="w-[20%]">
             <label className="form-control w-full ">
-              <div className="label">
+              <div className="label mb-[-4px]">
                 <span className="label-text">Price Group:</span>
+                <span>
+                  <span className="text-xs italic">spl prc?</span>
+                  <input
+                    type="checkbox"
+                    className="checkbox checkbox-xs ml-1"
+                    checked={isSpecialPrice}
+                    onChange={(e) => setIsSpecialPrice(e.target.checked)}
+                  />
+                </span>
               </div>
-              <select
-                className="select select-bordered select-sm w-full"
-                defaultValue={0}
-                {...register("price", { required: true })}
-              >
-                <option value={0}></option>
-                {selectedItem?.store && prefix === "INT" && (
-                  <option value={selectedItem?.store}>
-                    INT - {selectedItem?.store}
-                  </option>
-                )}
-                {selectedItem?.cal1 && prefix === "CAL" && (
-                  <option value={selectedItem?.cal1}>
-                    CAL1 - {selectedItem?.cal1}
-                  </option>
-                )}
-                {selectedItem?.cal2 && prefix === "CAL" && (
-                  <option value={selectedItem?.cal2}>
-                    CAL2 - {selectedItem?.cal2}
-                  </option>
-                )}
-                {selectedItem?.cal3 && prefix === "CAL" && (
-                  <option value={selectedItem?.cal3}>
-                    CAL3 - {selectedItem?.cal3}
-                  </option>
-                )}
-                {selectedItem?.ws1 && prefix === "W" && (
-                  <option value={selectedItem?.ws1}>
-                    W1 - {selectedItem?.ws1}
-                  </option>
-                )}
-                {selectedItem?.ws2 && prefix === "W" && (
-                  <option value={selectedItem?.ws2}>
-                    W2 - {selectedItem?.ws2}
-                  </option>
-                )}
-                {selectedItem?.ws3 && prefix === "W" && (
-                  <option value={selectedItem?.ws3}>
-                    W3 - {selectedItem?.ws3}
-                  </option>
-                )}
-              </select>
+              {!isSpecialPrice ? (
+                <select
+                  className="select select-bordered select-sm w-full"
+                  defaultValue={0}
+                  {...register("price", { required: true })}
+                >
+                  <option value={0}></option>
+                  {selectedItem?.store && prefix === "INT" && (
+                    <option value={selectedItem?.store}>
+                      INT - {selectedItem?.store}
+                    </option>
+                  )}
+                  {selectedItem?.cal1 && prefix === "CAL" && (
+                    <option value={selectedItem?.cal1}>
+                      CAL1 - {selectedItem?.cal1}
+                    </option>
+                  )}
+                  {selectedItem?.cal2 && prefix === "CAL" && (
+                    <option value={selectedItem?.cal2}>
+                      CAL2 - {selectedItem?.cal2}
+                    </option>
+                  )}
+                  {selectedItem?.cal3 && prefix === "CAL" && (
+                    <option value={selectedItem?.cal3}>
+                      CAL3 - {selectedItem?.cal3}
+                    </option>
+                  )}
+                  {selectedItem?.ws1 && prefix === "W" && (
+                    <option value={selectedItem?.ws1}>
+                      W1 - {selectedItem?.ws1}
+                    </option>
+                  )}
+                  {selectedItem?.ws2 && prefix === "W" && (
+                    <option value={selectedItem?.ws2}>
+                      W2 - {selectedItem?.ws2}
+                    </option>
+                  )}
+                  {selectedItem?.ws3 && prefix === "W" && (
+                    <option value={selectedItem?.ws3}>
+                      W3 - {selectedItem?.ws3}
+                    </option>
+                  )}
+                </select>
+              ) : (
+                <input
+                  type="text"
+                  className="input input-bordered input-sm w-full text-right"
+                  {...register("price", { required: true })}
+                />
+              )}
             </label>
           </div>
           <div className="w-[10%] flex justify-end">

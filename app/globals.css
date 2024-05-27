@@ -15,3 +15,13 @@
 body {
   color: rgb(var(--foreground-rgb));
 }
+
+/* Custom hide scrollbar styles */
+body::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}

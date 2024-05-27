@@ -33,7 +33,7 @@ const CustomerFormContainer = ({ customers, terms }: Props) => {
   );
   const [isExistingCustomer, setIsExistingCustomer] = useState<boolean>(false);
   const [customer, setCustomer] = useState<number>(0);
-  const [warehouse, setWarehouse] = useState(1);
+  const [warehouse, setWarehouse] = useState<number>(1);
 
   const handleNameChange = (e: React.FocusEvent<HTMLInputElement, Element>) => {
     const old = customers.filter(
@@ -64,6 +64,7 @@ const CustomerFormContainer = ({ customers, terms }: Props) => {
         address: address,
         termId: term,
       },
+      warehouseId: warehouse,
       invoiceNumber: invoicePrefix,
       invoiceDate: date,
       transactions: data,

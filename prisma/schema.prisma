@@ -78,9 +78,9 @@ model Items {
   ws3                  Float
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
-  supplier             Suppliers              @relation(fields: [supplierId], references: [id])
-  brand                Brands                 @relation(fields: [brandId], references: [id])
-  unit                 Units                  @relation(fields: [unitId], references: [id])
+  supplier             Suppliers              @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  brand                Brands                 @relation(fields: [brandId], references: [id], onDelete: Cascade)
+  unit                 Units                  @relation(fields: [unitId], references: [id], onDelete: Cascade)
   inventories          Inventory[] // Relation to Inventory
   supplierTransactions SupplierTransactions[]
   CustmerTransactions  CustomerTransactions[]
@@ -96,7 +96,7 @@ model Suppliers {
   items         Items[]
   Invoices      SupplierInvoices[]
   CheckVouchers CheckVouchers[]
-  Terms         Terms?             @relation(fields: [termId], references: [id])
+  Terms         Terms?             @relation(fields: [termId], references: [id], onDelete: Cascade)
 }
 
 model Brands {
@@ -118,16 +118,17 @@ model Warehouses {
 }
 
 model Inventory {
-  id                   Int                    @id @default(autoincrement())
-  warehouseId          Int // Foreign key for Warehouse
-  itemId               Int // Foreign key for Item
-  count                Int // Quantity of the item in the warehouse
-  price                Float                  @default(0.0)
-  createdAt            DateTime               @default(now())
-  updatedAt            DateTime               @updatedAt
-  warehouse            Warehouses             @relation(fields: [warehouseId], references: [id])
-  item                 Items                  @relation(fields: [itemId], references: [id])
-  SupplierTransactions SupplierTransactions[]
+  id                    Int                     @id @default(autoincrement())
+  warehouseId           Int // Foreign key for Warehouse
+  itemId                Int // Foreign key for Item
+  count                 Int // Quantity of the item in the warehouse
+  price                 Float                   @default(0.0)
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  warehouse             Warehouses              @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  item                  Items                   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  SupplierTransactions  SupplierTransactions[]
+  WarehouseTransactions WarehouseTransactions[]
 }
 
 model Units {
@@ -145,7 +146,7 @@ model Customers {
   name             String
   address          String
   termId           Int
-  term             Terms              @relation(fields: [termId], references: [id])
+  term             Terms              @relation(fields: [termId], references: [id], onDelete: Cascade)
   CustomerInvoices CustomerInvoices[]
   CounterReceits   CounterReceipts[]
 }
@@ -164,9 +165,9 @@ model SupplierTransactions {
   itemId      Int
   quantity    Int
   inventoryId Int
-  inventory   Inventory        @relation(fields: [inventoryId], references: [id])
-  item        Items            @relation(fields: [itemId], references: [id])
-  invoice     SupplierInvoices @relation(fields: [invoiceId], references: [id])
+  inventory   Inventory        @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  item        Items            @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  invoice     SupplierInvoices @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 }
 
 model SupplierInvoices {
@@ -178,9 +179,9 @@ model SupplierInvoices {
   totalAmount     Float                  @default(0.0)
   dateCreated     DateTime               @default(now())
   dateUpdated     DateTime               @updatedAt
-  supplier        Suppliers              @relation(fields: [supplierId], references: [id])
+  supplier        Suppliers              @relation(fields: [supplierId], references: [id], onDelete: Cascade)
   Transactions    SupplierTransactions[]
-  CheckVouchers   CheckVouchers?         @relation(fields: [checkVouchersId], references: [id])
+  CheckVouchers   CheckVouchers?         @relation(fields: [checkVouchersId], references: [id], onDelete: Cascade)
   checkVouchersId Int?
 }
 
@@ -193,8 +194,8 @@ model CustomerTransactions {
   quantity      Int
   supplied      Int
   isDiscounted  Boolean          @default(true)
-  invoice       CustomerInvoices @relation(fields: [invoiceId], references: [id])
-  item          Items            @relation(fields: [itemId], references: [id])
+  invoice       CustomerInvoices @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  item          Items            @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
 
 model CustomerInvoices {
@@ -207,20 +208,30 @@ model CustomerInvoices {
   totalAmount         Float                  @default(0.0)
   dateCreated         DateTime               @default(now())
   dateUpdated         DateTime               @updatedAt
-  customer            Customers              @relation(fields: [customerId], references: [id])
+  customer            Customers              @relation(fields: [customerId], references: [id], onDelete: Cascade)
   CustmerTransactions CustomerTransactions[]
-  CounterReceipts     CounterReceipts?       @relation(fields: [counterReceiptsId], references: [id])
+  CounterReceipts     CounterReceipts?       @relation(fields: [counterReceiptsId], references: [id], onDelete: Cascade)
   counterReceiptsId   Int?
 }
 
 model WarehouseTransactions {
-  id Int @id @default(autoincrement())
+  id          Int               @id @default(autoincrement())
+  inventoryId Int
+  invoiceId   Int
+  count       Int
+  Inventory   Inventory         @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+  Invoice     WarehouseInvoices @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 }
 
 model WarehouseInvoices {
-  id          Int         @id @default(autoincrement())
-  warehouseId Int?
-  Warehouses  Warehouses? @relation(fields: [warehouseId], references: [id])
+  id                    Int                     @id @default(autoincrement())
+  targetWarehouseId     Int
+  warehouseId           Int?
+  isFullfilled          Boolean                 @default(false)
+  dateCreated           DateTime                @default(now())
+  dateUpdated           DateTime                @updatedAt
+  Warehouses            Warehouses?             @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
+  WarehouseTransactions WarehouseTransactions[]
 }
 
 model CounterReceipts {
@@ -229,7 +240,7 @@ model CounterReceipts {
   dueDate          DateTime
   dateCreated      DateTime           @default(now())
   CustomerInvoices CustomerInvoices[]
-  Customers        Customers?         @relation(fields: [customerId], references: [id])
+  Customers        Customers?         @relation(fields: [customerId], references: [id], onDelete: Cascade)
   customerId       Int?
 }
 
@@ -242,6 +253,6 @@ model CheckVouchers {
   dueDate          DateTime
   dateCreated      DateTime           @default(now())
   SupplierInvoices SupplierInvoices[]
-  Supplier         Suppliers?         @relation(fields: [supplierId], references: [id])
+  Supplier         Suppliers?         @relation(fields: [supplierId], references: [id], onDelete: Cascade)
   supplierId       Int?
 }

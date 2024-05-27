@@ -8,7 +8,10 @@ const InvoicesLayout = ({ children }: { children: ReactNode }) => {
   const currentPath = usePathname();
   return (
     <div>
-      <div role="tablist" className="tabs tabs-lifted tabs-lg mb-8 w-[900px]">
+      <div
+        role="tablist"
+        className="tabs tabs-lifted tabs-lg mb-8 w-[900px] print:hidden"
+      >
         <Link
           role="tab"
           className={classNames({

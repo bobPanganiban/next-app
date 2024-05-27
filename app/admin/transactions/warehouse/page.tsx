@@ -5,7 +5,6 @@ import WarehouseTransfer from "./WarehouseTransfer";
 const WarehouseTransactionsPage = async () => {
   const inventories = await prisma.inventory.findMany({
     include: {
-      warehouse: true,
       item: {
         select: {
           id: true,
@@ -23,11 +22,9 @@ const WarehouseTransactionsPage = async () => {
     },
   });
 
-  console.log(inventories);
-
   return (
     <div>
-      <WarehouseTransfer />
+      <WarehouseTransfer inventories={inventories} />
     </div>
   );
 };

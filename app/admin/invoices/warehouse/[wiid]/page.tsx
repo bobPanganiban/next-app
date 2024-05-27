@@ -1,15 +1,21 @@
 import React from "react";
-import WarehouseInvoicesTable from "./WarehouseInvoicesTable";
 import { prisma } from "@/prisma/client";
-import { Invoices } from "@/app/entities/entities";
-
-const WarehouseInvoicePage = async () => {
-  const invoices = await prisma.warehouseInvoices.findMany({
+import WarehouseInvoice from "./WarehouseInvoice";
+interface Props {
+  params: { wiid: string };
+}
+const WarehouseInvoiceDetailPage = async ({ params }: Props) => {
+  const invoice = await prisma.warehouseInvoices.findUnique({
+    where: {
+      id: parseInt(params.wiid),
+    },
     include: {
       WarehouseTransactions: {
-        include: {
+        select: {
+          count: true,
           Inventory: {
-            include: {
+            select: {
+              price: true,
               item: {
                 select: {
                   desc1: true,
@@ -30,11 +36,9 @@ const WarehouseInvoicePage = async () => {
   });
   return (
     <div className="w-[900px]">
-      <WarehouseInvoicesTable invoices={invoices as Invoices[]} />
+      <WarehouseInvoice invoice={invoice} />
     </div>
   );
 };
 
-export const dynamic = "force-dynamic";
-
-export default WarehouseInvoicePage;
+export default WarehouseInvoiceDetailPage;

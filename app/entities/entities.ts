@@ -155,9 +155,66 @@ export interface ItemInventory {
   desc2: string;
   desc3: string;
   brand: Brand;
+  supplierId: number;
   inventories: {
     warehouseId: number;
     count: number;
     price: number;
   }[];
+}
+
+export interface Inventories {
+  id: number;
+  itemId: number;
+  warehouseId: number;
+  count: number;
+  price: number;
+  item: {
+    id: number;
+    desc1: string;
+    desc2: string;
+    desc3: string;
+    brand: {
+      id: number;
+      name: string;
+    };
+    supplier: {
+      id: number;
+      name: string;
+    };
+  };
+  transfer?: number;
+}
+
+// Warhouse transaction
+export interface Invoices {
+  id: number;
+  isFullfilled: boolean;
+  targetWarehouseId: number;
+  warehouseId: number;
+  dateCreated: Date;
+  WarehouseTransactions: WarehouseTransactions[];
+}
+
+interface WarehouseTransactions {
+  count: number;
+  id: number;
+  inventoryId: number;
+  invoiceId: number;
+  Inventory: Inventory;
+}
+
+interface Inventory {
+  count: number;
+  id: number;
+  itemId: number;
+  price: number;
+  item: {
+    desc1: string;
+    desc2: string;
+    desc3: string;
+    brand: {
+      name: string;
+    };
+  };
 }

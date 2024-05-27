@@ -17,10 +17,11 @@ interface Props {
 const CheckVoucher = ({ checkVoucher }: Props) => {
   const [loader, setLoader] = useState(false);
   const formatCurrency = useCurrency();
+
   return (
     <>
       <button
-        className="btn btn-sm bg-gray-800 text-white"
+        className="btn btn-sm bg-gray-800 text-white print:hidden"
         onClick={async () => {
           setLoader(true);
           try {
@@ -40,7 +41,10 @@ const CheckVoucher = ({ checkVoucher }: Props) => {
       >
         {loader ? "Downloading" : "Download"}
       </button>
-      <section id="checkVoucher" className="px-8 pb-2 mt-0 pt-0">
+      <section
+        id="checkVoucher"
+        className="flex-row justify-center px-8 pb-2 mt-0 pt-0"
+      >
         <div className="w-full flex justify-center font-semibold text-lg underline mb-8">
           CHECK VOUCHER
         </div>
