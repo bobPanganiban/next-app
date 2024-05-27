@@ -9,13 +9,16 @@ const Print = ({ inventories }: { inventories: ItemInventory[] }) => {
   const formatCurrency = useCurrency();
   useEffect(() => {
     if (typeof window !== "undefined") {
-      //   window.print();
+      window.print();
     }
   }, []);
 
   return (
     <div>
-      <button className="btn btn-sm text-white bg-slate-800 print:hidden">
+      <button
+        className="btn btn-sm text-white bg-slate-800 print:hidden"
+        onClick={(e) => router.back()}
+      >
         BACK
       </button>
       <div className="flex justify-between">

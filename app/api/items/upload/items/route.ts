@@ -96,11 +96,11 @@ export async function POST(request: NextRequest) {
         discount1:
           parseFloat(body.item.srpAndDiscount.discount1 as string) || 0,
         discount2:
-          parseFloat(body.item.srpAndDiscount.discount1 as string) || 0,
+          parseFloat(body.item.srpAndDiscount.discount2 as string) || 0,
         discount3:
-          parseFloat(body.item.srpAndDiscount.discount1 as string) || 0,
+          parseFloat(body.item.srpAndDiscount.discount3 as string) || 0,
         discount4:
-          parseFloat(body.item.srpAndDiscount.discount1 as string) || 0,
+          parseFloat(body.item.srpAndDiscount.discount4 as string) || 0,
       },
     });
     return NextResponse.json(
