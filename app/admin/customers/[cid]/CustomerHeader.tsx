@@ -1,6 +1,5 @@
 "use client";
-import { Customer } from "@/app/entities/entities";
-import { Terms } from "@prisma/client";
+import { Customer, Terms } from "@/app/entities/entities";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
