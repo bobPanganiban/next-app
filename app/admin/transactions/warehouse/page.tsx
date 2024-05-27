@@ -24,9 +24,12 @@ const WarehouseTransactionsPage = async () => {
 
   return (
     <div>
-      <WarehouseTransfer inventories={inventories} />
+      {inventories.length > 0 && (
+        <WarehouseTransfer inventories={inventories} />
+      )}
     </div>
   );
 };
+export const dynamic = "force-dynamic";
 
 export default WarehouseTransactionsPage;
