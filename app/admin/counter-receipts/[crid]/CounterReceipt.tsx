@@ -41,7 +41,7 @@ const CounterReceipt = ({ counterReceipt }: Props) => {
         {loader ? "Downloading" : "Download"}
       </button>
       <section id="counterReceipt" className="px-8 pb-2 mt-0 pt-0">
-        <div className="w-full flex justify-center font-semibold text-lg underline mb-8">
+        <div className="w-full flex justify-center font-semibold text-lg underline mb-8 print:hidden">
           COUNTER RECEIPT
         </div>
         <div className="border-b-[3px] pb-2 mb-2 border-gray-800">

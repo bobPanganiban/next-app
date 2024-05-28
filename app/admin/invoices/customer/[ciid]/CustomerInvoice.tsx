@@ -97,7 +97,9 @@ const CustomerInvoice = ({ invoice }: { invoice: any }) => {
                         : ""}
                     </td>
                     <td align="right">
-                      {formatCurrency(transaction.customerPrice)}
+                      {`${formatCurrency(transaction.customerPrice)}${
+                        transaction.isSpecialPrice ? "*" : ""
+                      }`}
                     </td>
                     <td align="right">
                       {formatCurrency(

@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(checkVoucher, { status: 201 });
 }
 
-export async function PUT(request: NextRequest) {
+export async function PATCH(request: NextRequest) {
   const body = await request.json();
 
   try {

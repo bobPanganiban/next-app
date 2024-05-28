@@ -13,7 +13,7 @@ const CustomerPage = async () => {
         <CreateNewButton href="/admin/customers/new" label="New Customer" />
       </div>
       <div>
-        <table className="table table-sm w-[900px]">
+        <table className="table table-xs w-[900px]">
           <thead>
             <tr>
               <th className="w-[5%]">ID</th>
@@ -24,7 +24,7 @@ const CustomerPage = async () => {
           </thead>
           <tbody>
             {customers.map((customer: Customer) => (
-              <tr key={customer.id}>
+              <tr key={customer.id} className="hover">
                 <td>{customer.id}</td>
                 <td>
                   <Link href={`/admin/customers/${customer.id}`}>

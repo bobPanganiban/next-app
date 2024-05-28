@@ -9,7 +9,7 @@ interface Props {
   check: string;
 }
 
-const BankDetails = ({ bank, date, id, check = "" }: Props) => {
+const BankDetails = ({ bank, date, id, check }: Props) => {
   const [checkNumber, setCheckNumber] = useState<string>(check);
   const [editCn, setEditCn] = useState<boolean>(false);
 
@@ -19,7 +19,7 @@ const BankDetails = ({ bank, date, id, check = "" }: Props) => {
     setEditCn(false);
 
     axios
-      .put(`/api/invoices/checkvouchers`, { checkNumber, id })
+      .patch(`/api/invoices/checkvouchers`, { checkNumber, id })
       .then((res) => console.log(res));
   };
 

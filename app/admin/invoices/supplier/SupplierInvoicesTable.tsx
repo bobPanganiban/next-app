@@ -5,6 +5,8 @@ import { format } from "date-fns";
 import Link from "next/link";
 import { useCurrency } from "@/app/hooks/useCurrency";
 import { GrFormView } from "react-icons/gr";
+import { useSession } from "next-auth/react";
+import { useUserProfile } from "@/app/hooks/useUserProfile";
 
 interface Props {
   supplierInvoices: SupplierInvoice[];
@@ -17,6 +19,9 @@ const SupplierInvoicesTable = ({ supplierInvoices }: Props) => {
   const [showCompleted, setShowCompleted] = useState<boolean>(false);
   const formatCurrency = useCurrency();
   const TotalPages = Math.ceil(supplierInvoices.length / itemPerPage);
+
+  const { status, data: session } = useSession();
+  const user = useUserProfile(session?.user?.email || "");
 
   return (
     <div>
@@ -56,20 +61,30 @@ const SupplierInvoicesTable = ({ supplierInvoices }: Props) => {
         <tbody>
           {/* page 2, 20((p*ipp)-ipp) - 40(ipp*p) */}
           {supplierInvoices
-            .filter((invoice: SupplierInvoice, index: number) => {
-              let show = showCompleted || !invoice.isfulfilled;
-              let paginated =
-                index >= page * itemPerPage - itemPerPage &&
-                index < itemPerPage * page;
+            .reduce(
+              (
+                acc: SupplierInvoice[],
+                invoice: SupplierInvoice,
+                index: number
+              ) => {
+                let show = showCompleted || !invoice.isfulfilled;
+                let paginated =
+                  index >= page * itemPerPage - itemPerPage &&
+                  index < itemPerPage * page;
 
-              let search =
-                invoiceSearch === ""
-                  ? true
-                  : invoice.invoiceNumber
-                      .toUpperCase()
-                      .includes(invoiceSearch.toUpperCase());
-              return paginated && search && show;
-            })
+                let search =
+                  invoiceSearch === ""
+                    ? true
+                    : invoice.invoiceNumber
+                        .toUpperCase()
+                        .includes(invoiceSearch.toUpperCase());
+                if (paginated && search && show) {
+                  acc.push(invoice);
+                }
+                return acc;
+              },
+              [] as SupplierInvoice[]
+            )
             .map((invoice: SupplierInvoice) => (
               <tr key={invoice.id} className="hover">
                 <td>
@@ -79,9 +94,13 @@ const SupplierInvoicesTable = ({ supplierInvoices }: Props) => {
                 </td>
                 <td>{format(invoice.invoiceDate, "MM/dd/yyyy")}</td>
                 <td>
-                  <Link href={`/admin/suppliers/${invoice.supplierId}`}>
-                    {invoice.supplier!.name}
-                  </Link>
+                  {user?.data?.data.role === "admin" ? (
+                    <Link href={`/admin/suppliers/${invoice.supplierId}`}>
+                      {invoice.supplier!.name}
+                    </Link>
+                  ) : (
+                    invoice.supplier!.name
+                  )}
                 </td>
                 <td>{formatCurrency(invoice.totalAmount)}</td>
                 <td>{invoice.isfulfilled ? "COMPLETED" : "PENDING"}</td>

@@ -1,6 +1,8 @@
 "use client";
 import { CustomerInvoice } from "@/app/entities/entities";
 import { useCurrency } from "@/app/hooks/useCurrency";
+import { useUserProfile } from "@/app/hooks/useUserProfile";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import React, { useState } from "react";
 import { GrFormView } from "react-icons/gr";
@@ -16,6 +18,9 @@ const CustomerInvoicesTable = ({ customerInvoices }: Props) => {
   const [showCompleted, setShowCompleted] = useState<boolean>(false);
   const formatCurrency = useCurrency();
   const TotalPages = Math.ceil(customerInvoices.length / itemPerPage);
+
+  const { status, data: session } = useSession();
+  const user = useUserProfile(session?.user?.email || "");
 
   return (
     <div className="flex-row">
@@ -87,9 +92,13 @@ const CustomerInvoicesTable = ({ customerInvoices }: Props) => {
                 </td>
                 <td>{invoice.invoiceDate.toLocaleDateString()}</td>
                 <td>
-                  <Link href={`/admin/customers/${invoice.customerId}`}>
-                    {invoice.customer?.name}
-                  </Link>
+                  {user?.data?.data.role === "admin" ? (
+                    <Link href={`/admin/customers/${invoice.customerId}`}>
+                      {invoice.customer?.name}
+                    </Link>
+                  ) : (
+                    invoice.customer?.name
+                  )}
                 </td>
                 <td>{formatCurrency(invoice.totalAmount)}</td>
                 <td>{invoice.isfulfilled ? "COMPLETED" : "PENDING"}</td>

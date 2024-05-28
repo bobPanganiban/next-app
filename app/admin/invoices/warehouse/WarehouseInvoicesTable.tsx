@@ -34,8 +34,8 @@ const WarehouseInvoicesTable = ({ invoices }: Props) => {
             >
               <td>{invoice.id}</td>
               <td>{invoice.dateCreated.toLocaleDateString()}</td>
-              <td>{invoice.warehouseId}</td>
-              <td>{invoice.targetWarehouseId}</td>
+              <td>Warehouse {invoice.warehouseId}</td>
+              <td>Warehouse {invoice.targetWarehouseId}</td>
               <td>{invoice.isFullfilled ? "COMPLETE" : "IN TRANSIT"}</td>
               <td></td>
             </tr>

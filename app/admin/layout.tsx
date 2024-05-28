@@ -97,7 +97,10 @@ const AdminLayout = ({ children }: { children: ReactNode }) => {
 
   return (
     <div className="flex">
-      <aside className="bg-slate-50 shadow-md h-full w-[20%] max-w-[200px] print:hidden">
+      <aside
+        className="bg-slate-50 shadow-md h-full w-[20%] max-w-[200px] print:hidden"
+        hidden={!user?.data?.data.role}
+      >
         <ul className="flex flex-col pt-5">
           {sidenav.map((link: SideNave, index: number) => (
             <li

@@ -20,7 +20,7 @@ const SuppliersPage = async () => {
           </thead>
           <tbody>
             {suppliers.map((supplier: Supplier, index: number) => (
-              <tr key={index}>
+              <tr key={index} className="hover">
                 <td>{supplier.id}</td>
                 <td>
                   <ProfileLink

@@ -1,6 +1,7 @@
 "use client";
 import { useCurrency } from "@/app/hooks/useCurrency";
 import axios from "axios";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
@@ -273,11 +274,13 @@ const SupplierTransactions = ({
             <tbody>
               {checkVouchers.map(
                 (checkVoucher: CheckVoucher, index: number) => (
-                  <tr key={index}>
-                    <td>{checkVoucher.dueDate.toLocaleDateString()}</td>
-                    <td align="right">
-                      {formatCurrency(checkVoucher.totalAmount)}
-                    </td>
+                  <tr key={index} className="hover">
+                    <Link href={`/admin/check-vouchers/${checkVoucher.id}`}>
+                      <td>{checkVoucher.dueDate.toLocaleDateString()}</td>
+                      <td align="right">
+                        {formatCurrency(checkVoucher.totalAmount)}
+                      </td>
+                    </Link>
                   </tr>
                 )
               )}

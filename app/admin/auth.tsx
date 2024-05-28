@@ -2,54 +2,29 @@
 import { usePathname } from "next/navigation";
 import React from "react";
 
-const Auth = ({ children, role }: { children: any; role: string | null }) => {
+const Auth = ({ children, role = "" }: { children: any; role: string }) => {
   const currentPath = usePathname();
-  //   const role = localStorage.getItem("role");
 
-  const authorizations = [
-    {
-      path: "transactions",
-      roles: [],
-    },
-    {
-      path: "invoices",
-      roles: [],
-    },
-    {
-      path: "suppliers",
-      roles: [],
-    },
-    {
-      path: "customers",
-      roles: [],
-    },
-    {
-      path: "check-vouchers",
-      roles: [],
-    },
-    {
-      path: "counter-receipts",
-      roles: [],
-    },
-    {
-      path: "inventory",
-      roles: [],
-    },
-    {
-      path: "products",
-      roles: [],
-    },
-    {
-      path: "warehouses",
-      roles: [],
-    },
-    {
-      path: "brands",
-      roles: [],
-    },
-  ];
+  const auth: { [key: string]: string[] } = {
+    sec: [
+      "transactions",
+      "invoices",
+      "check-vouchers",
+      "counter-receipts",
+      "inventory",
+    ],
+    sec2: ["transactions", "invoices"],
+    "": [],
+  };
 
-  return <>{children}</>;
+  const isAdmin = role === "admin";
+  const isAuthorized = auth[role]?.some((path) => currentPath.includes(path));
+
+  if (isAdmin || isAuthorized) {
+    return <>{children}</>;
+  } else {
+    return <div className="p-5">You do not have access to this page.</div>;
+  }
 };
 
 export default Auth;

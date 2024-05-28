@@ -5,6 +5,8 @@ import { useCurrency } from "@/app/hooks/useCurrency";
 import React, { useState } from "react";
 import { MdDelete } from "react-icons/md";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+import Spinner from "@/app/components/Spinner";
 
 interface Props {
   inventories: Inventories[];
@@ -23,6 +25,8 @@ interface Transaction {
 }
 
 const WarehouseTransfer = ({ inventories }: Props) => {
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
   const warehouses = [1, 2, 3];
   const [from, setFrom] = useState<number>(1);
   const [to, setTo] = useState<number>(2);
@@ -62,6 +66,7 @@ const WarehouseTransfer = ({ inventories }: Props) => {
   };
 
   const handleTransfer = () => {
+    setLoading(true);
     const payload: Payload = {
       warehouseId: from,
       targetWarehouseId: to,
@@ -77,9 +82,10 @@ const WarehouseTransfer = ({ inventories }: Props) => {
     axios
       .post("/api/transactions/warehouse", payload)
       .then((res) => {
-        console.log(res);
+        router.push("/admin/invoices/warehouse");
+        router.refresh();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => setLoading(false));
   };
 
   return (
@@ -176,7 +182,8 @@ const WarehouseTransfer = ({ inventories }: Props) => {
               )
               .map((inv) => (
                 <option value={inv.id} key={inv.id}>
-                  {inv.item.desc1} {inv.item.desc2} {inv.item.desc3}
+                  {inv.item.desc1} {inv.item.desc2} {inv.item.desc3} @{" "}
+                  {formatCurrency(inv.price)}
                 </option>
               ))}
           </select>
@@ -213,8 +220,16 @@ const WarehouseTransfer = ({ inventories }: Props) => {
       <button
         className="btn btn-bordered btn-sm mt-2 "
         onClick={(e) => handleTransfer()}
+        disabled={loading}
       >
-        INITIATE TRANSFER
+        {loading ? (
+          <span>
+            <Spinner />
+            Initiating Transfer
+          </span>
+        ) : (
+          "Transfer"
+        )}
       </button>
     </>
   );

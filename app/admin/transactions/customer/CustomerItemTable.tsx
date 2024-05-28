@@ -24,6 +24,7 @@ export interface ItemFormEntry {
   quantitySupplied: number;
   storePrice: number;
   price: number;
+  isSpecialPrice?: boolean;
   supplied: "ALL" | "PARTIAL" | "TO_FOLLOW";
 }
 
@@ -71,6 +72,7 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
         d3: selectedItem.discount3,
         d4: selectedItem.discount4,
       }),
+      isSpecialPrice: isSpecialPrice,
       supplied:
         selectedItem.inventoryCount > parseInt(data.quantity)
           ? "ALL"

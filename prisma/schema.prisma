@@ -3,7 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "./generated/client"
+  // output   = "./generated/client"
 }
 
 datasource db {
@@ -187,16 +187,17 @@ model SupplierInvoices {
 }
 
 model CustomerTransactions {
-  id            Int              @id @default(autoincrement())
-  invoiceId     Int
-  itemId        Int
-  customerPrice Float
-  storePrice    Float            @default(0)
-  quantity      Int
-  supplied      Int
-  isDiscounted  Boolean          @default(true)
-  invoice       CustomerInvoices @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
-  item          Items            @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  id             Int              @id @default(autoincrement())
+  invoiceId      Int
+  itemId         Int
+  customerPrice  Float
+  storePrice     Float            @default(0)
+  quantity       Int
+  supplied       Int
+  isDiscounted   Boolean          @default(true)
+  isSpecialPrice Boolean          @default(false)
+  invoice        CustomerInvoices @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  item           Items            @relation(fields: [itemId], references: [id], onDelete: Cascade)
 }
 
 model CustomerInvoices {

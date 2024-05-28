@@ -2,6 +2,7 @@ import React from "react";
 import ItemsTable, { Item, Warehouse } from "./ItemsTable";
 import { prisma } from "@/prisma/client";
 import FormHeader from "./FormHeader";
+import Link from "next/link";
 
 interface Props {
   searchParams: { s: string };
@@ -10,9 +11,13 @@ interface Props {
 const SupplierPage = async ({ searchParams: { s } }: Props) => {
   const warehouses = await prisma.warehouses.findMany();
   const suppliers = await prisma.suppliers.findMany();
+
+  if (suppliers.length === 0)
+    return <Link href={"/admin/suppliers/new"}>Create Supplier</Link>;
+
   const items = await prisma.items.findMany({
     where: {
-      supplierId: s ? parseInt(s) : suppliers[0].id,
+      supplierId: s ? parseInt(s) : suppliers[0].id || 0,
     },
     select: {
       id: true,

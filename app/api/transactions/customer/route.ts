@@ -78,6 +78,7 @@ export async function POST(request: NextRequest) {
           supplied: transaction.quantitySupplied,
           itemId: transaction.itemId,
           storePrice: transaction.storePrice,
+          isSpecialPrice: transaction.isSpecialPrice,
         },
       });
 
