@@ -1,7 +1,9 @@
 "use client";
 import TableActions from "@/app/components/TableActions";
 import { Item } from "@/app/entities/entities";
+import { useCurrency } from "@/app/hooks/useCurrency";
 import React, { useState } from "react";
+import { handlePrice } from "@/app/utils/priceUtils";
 
 interface Props {
   items: Item[];
@@ -11,6 +13,7 @@ const ProductTable = ({ items }: Props) => {
   const [page, setPage] = useState<number>(1);
   const itemsPerPage = 10;
   const TotalPages = Math.ceil(items.length / itemsPerPage);
+  const formatCurrency = useCurrency();
 
   return (
     <>
@@ -21,7 +24,12 @@ const ProductTable = ({ items }: Props) => {
             <th className="w-[25%]">Supplier</th>
             <th className="w-[15%]">Brand</th>
             <th className="w-[40%]">Description</th>
-            <th className="w-[10%]">Actions</th>
+            <th align="right" className="w-[5%]">
+              Unit Price
+            </th>
+            <th align="right" className="w-[5%]">
+              Store Price
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -36,13 +44,18 @@ const ProductTable = ({ items }: Props) => {
                 <th>{item.id}</th>
                 <td>{item.supplier.name}</td>
                 <td>{item.brand.name}</td>
-                <td>{`${item.desc1}${item.desc2}${item.desc3}`}</td>
-                <td>
-                  <TableActions
-                    edit={`/admin/products/${item.id}`}
-                    targetId={item.id}
-                  />
+                <td>{`${item.desc1} ${item.desc2} ${item.desc3}`}</td>
+                <td align="right">
+                  {formatCurrency(
+                    handlePrice(item.store, {
+                      d1: item.discount1,
+                      d2: item.discount2,
+                      d3: item.discount3,
+                      d4: item.discount4,
+                    })
+                  )}
                 </td>
+                <td align="right">{formatCurrency(item.store)}</td>
               </tr>
             ))}
         </tbody>

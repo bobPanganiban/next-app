@@ -228,7 +228,7 @@ const ItemsTable = ({ items, sid = "0", warehouses }: Props) => {
                 <option
                   key={item.id}
                   value={item.id}
-                >{`${item.brand.name} - ${item.desc1}${item.desc2}${item.desc3}`}</option>
+                >{`${item.brand.name} - ${item.desc1} ${item.desc2} ${item.desc3}`}</option>
               ))}
             </select>
           </div>

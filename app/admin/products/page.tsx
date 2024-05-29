@@ -17,6 +17,7 @@ const ProductPage = async () => {
       discount2: true,
       discount3: true,
       discount4: true,
+      store: true,
       supplier: {
         select: {
           name: true,

@@ -134,13 +134,13 @@ const CustomerInvoice = ({ invoice }: { invoice: any }) => {
         <div className="flex w-full text-xs mt-4 gap-x-2">
           <div className="w-[50%] flex justify-between">
             <div>CHECKED BY:</div>
-            <div className="border-b-[1px] border-b-gray-800 w-[240px]">
+            <div className="border-b-[1px] border-b-gray-800 w-[235px]">
               &nbsp;
             </div>
           </div>
           <div className="w-[50%] flex justify-between">
             <div>RECEIVED BY:</div>
-            <div className="border-b-[1px] border-b-gray-800 w-[240px]">
+            <div className="border-b-[1px] border-b-gray-800 w-[235px]">
               &nbsp;
             </div>
           </div>

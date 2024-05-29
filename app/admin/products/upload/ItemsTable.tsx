@@ -6,6 +6,7 @@ import { forEach, random } from "lodash";
 import { Brand, ItemDetails, Supplier } from "@/app/entities/entities";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useCurrency } from "@/app/hooks/useCurrency";
 
 interface Props {
   suppliers: Supplier[];
@@ -24,6 +25,7 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
 
   const [updated, setUpdated] = useState<number>(0);
   const [created, setCreated] = useState<number>(0);
+  const formatCurrency = useCurrency();
 
   // You might want to call the hook here if it's used to transform the entire dataset after it's been set
 
@@ -80,6 +82,7 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
 
   const batchProcess = (array: any[], batchSize: number) => {
     let index = 0;
+    let newItem = 0;
     function nextBatch(): Promise<any> {
       if (index < array.length) {
         const batch = array.slice(index, index + batchSize);
@@ -87,10 +90,12 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
         return Promise.all(
           batch.map((item) => axios.post("/api/items/upload/items", { item }))
         ).then((res) => {
-          console.log("batchResult", res);
+          console.log(res[0].data.message);
+          if (res[0].data.message === "Item Created") newItem++;
           return nextBatch();
         });
       } else {
+        setCreated(newItem);
         return Promise.resolve();
       }
     }
@@ -115,7 +120,7 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
       .then((resArray) => {
         console.log("items uploaded", resArray);
         setUploading(false);
-        router.push(`/admin/products`);
+        router.push(`/admin/products?newItem=${created}`);
         router.refresh();
       })
       .catch((err) => {
@@ -140,13 +145,17 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
           </button>
         )}
       </div>
-      <table className="table table-xs mt-8 w-full">
+      <table className="table table-xs mt-8 w-[900px]">
         <thead>
           <tr>
             <th className="w-[30%]">Supplier</th>
             <th className="w-[40%]">Description</th>
-            <th className="w-[15%]">Unit Price</th>
-            <th className="w-[15%]">Status</th>
+            <th align="right" className="w-[15%]">
+              Unit Price
+            </th>
+            <th align="right" className="w-[15%]">
+              Store Price
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -160,11 +169,25 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
               <tr key={index}>
                 <td>{item.supplier}</td>
                 <td>
-                  {item.description.desc1}
-                  {item.description.desc2}
+                  {item.description.desc1} {item.description.desc2}{" "}
                   {item.description.desc3}
                 </td>
-                <td>{item.srpAndDiscount.unitPrice}</td>
+                <td align="right">
+                  {formatCurrency(
+                    parseFloat(
+                      item.srpAndDiscount.unitPrice
+                        .toString()
+                        .replaceAll(",", "")
+                    )
+                  )}
+                </td>
+                <td align="right">
+                  {formatCurrency(
+                    parseFloat(
+                      item.customerPrice.ib.toString().replaceAll(",", "")
+                    )
+                  )}
+                </td>
               </tr>
             ))}
         </tbody>
