@@ -17,7 +17,14 @@ export async function GET(request: NextRequest) {
       orderBy: {
         createdAt: "desc", // Order by `createdAt` in descending order
       },
-      take: 1, // Take only the most recent (top) record
+      take: 1,
+      include: {
+        item: {
+          select: {
+            store: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json(itemInventory);

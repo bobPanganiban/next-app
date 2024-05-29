@@ -70,6 +70,7 @@ model Items {
   discount2            Float                  @default(0.0)
   discount3            Float                  @default(0.0)
   discount4            Float                  @default(0.0)
+  discount5            Float                  @default(0.0)
   store                Float                  @default(0.0)
   cal1                 Float
   cal2                 Float

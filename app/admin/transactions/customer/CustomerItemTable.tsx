@@ -4,7 +4,9 @@ import { CustomerInvoice, Item } from "@/app/entities/entities";
 import { useBrands } from "@/app/hooks/useBrands";
 import { useCurrency } from "@/app/hooks/useCurrency";
 import { useItems } from "@/app/hooks/useItems";
+import { useUserProfile } from "@/app/hooks/useUserProfile";
 import { handlePrice } from "@/app/utils/priceUtils";
+import { useSession } from "next-auth/react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { MdDelete } from "react-icons/md";
@@ -39,6 +41,8 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
   const { data: brands, isLoading: brandsLoading } = useBrands();
   const { data: items, isLoading: itemsLoading } = useItems();
   const formatCurrency = useCurrency();
+  const { data } = useSession();
+  const { data: user } = useUserProfile(data?.user?.email || "");
 
   const handleSelectedItem = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedItem(
@@ -71,6 +75,7 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
         d2: selectedItem.discount2,
         d3: selectedItem.discount3,
         d4: selectedItem.discount4,
+        d5: selectedItem.discount5,
       }),
       isSpecialPrice: isSpecialPrice,
       supplied:
@@ -297,15 +302,17 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
             <label className="form-control w-full ">
               <div className="label mb-[-4px]">
                 <span className="label-text">Price Group:</span>
-                <span>
-                  <span className="text-xs italic">spl prc?</span>
-                  <input
-                    type="checkbox"
-                    className="checkbox checkbox-xs ml-1"
-                    checked={isSpecialPrice}
-                    onChange={(e) => setIsSpecialPrice(e.target.checked)}
-                  />
-                </span>
+                {user?.data.role === "admin" && (
+                  <span>
+                    <span className="text-xs italic">spl prc?</span>
+                    <input
+                      type="checkbox"
+                      className="checkbox checkbox-xs ml-1"
+                      checked={isSpecialPrice}
+                      onChange={(e) => setIsSpecialPrice(e.target.checked)}
+                    />
+                  </span>
+                )}
               </div>
               {!isSpecialPrice ? (
                 <select

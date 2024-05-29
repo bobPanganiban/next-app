@@ -1,5 +1,4 @@
 "use client";
-import TableActions from "@/app/components/TableActions";
 import { Item } from "@/app/entities/entities";
 import { useCurrency } from "@/app/hooks/useCurrency";
 import React, { useState } from "react";
@@ -52,6 +51,7 @@ const ProductTable = ({ items }: Props) => {
                       d2: item.discount2,
                       d3: item.discount3,
                       d4: item.discount4,
+                      d5: item.discount5,
                     })
                   )}
                 </td>

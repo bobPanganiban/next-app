@@ -101,6 +101,8 @@ export async function POST(request: NextRequest) {
           parseFloat(body.item.srpAndDiscount.discount3 as string) || 0,
         discount4:
           parseFloat(body.item.srpAndDiscount.discount4 as string) || 0,
+        discount5:
+          parseFloat(body.item.srpAndDiscount.discount5 as string) || 0,
       },
     });
     return NextResponse.json(
@@ -147,6 +149,8 @@ export async function POST(request: NextRequest) {
           parseFloat(body.item.srpAndDiscount.discount3 as string) || 0,
         discount4:
           parseFloat(body.item.srpAndDiscount.discount4 as string) || 0,
+        discount5:
+          parseFloat(body.item.srpAndDiscount.discount5 as string) || 0,
       },
     });
     return NextResponse.json(

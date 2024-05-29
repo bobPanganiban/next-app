@@ -31,15 +31,16 @@ const useUploadedItems = (data: any) => {
           discount2: tab["__EMPTY_7"],
           discount3: tab["__EMPTY_8"],
           discount4: tab["__EMPTY_9"],
+          discount5: tab["__EMPTY_10"],
         },
         customerPrice: {
           ib: tab["PRICES OF DIFFERENT TYPE OF CUSTOMERS"],
-          c1: tab["__EMPTY_10"],
-          c2: tab["__EMPTY_11"],
-          c3: tab["__EMPTY_12"],
-          w1: tab["__EMPTY_13"],
-          w2: tab["__EMPTY_14"],
-          w3: tab["__EMPTY_15"],
+          c1: tab["__EMPTY_11"],
+          c2: tab["__EMPTY_12"],
+          c3: tab["__EMPTY_13"],
+          w1: tab["__EMPTY_14"],
+          w2: tab["__EMPTY_15"],
+          w3: tab["__EMPTY_16"],
         },
       };
       items.push(item);

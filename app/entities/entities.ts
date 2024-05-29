@@ -7,6 +7,7 @@ export interface Item {
   discount2: number;
   discount3: number;
   discount4: number;
+  discount5: number;
   store?: number;
   cal1?: number;
   cal2?: number;
@@ -98,6 +99,7 @@ interface Srp {
   discount2?: String;
   discount3?: String;
   discount4?: String;
+  discount5?: String;
 }
 
 interface CustomerPrice {
