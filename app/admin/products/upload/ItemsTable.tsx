@@ -7,6 +7,7 @@ import { Brand, ItemDetails, Supplier } from "@/app/entities/entities";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useCurrency } from "@/app/hooks/useCurrency";
+import Spinner from "@/app/components/Spinner";
 
 interface Props {
   suppliers: Supplier[];
@@ -22,8 +23,7 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
   const [newSuppliers, setNewSuppliers] = useState<string[]>([]);
   const [uploading, setUploading] = useState<boolean>(false);
 
-  const [updated, setUpdated] = useState<number>(0);
-  const [created, setCreated] = useState<number>(0);
+  const [processed, setProcessed] = useState<number>(0);
   const formatCurrency = useCurrency();
 
   // You might want to call the hook here if it's used to transform the entire dataset after it's been set
@@ -81,7 +81,7 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
 
   const batchProcess = (array: any[], batchSize: number, endpoint: string) => {
     let index = 0;
-    let newItem = 0;
+    setProcessed(0);
     function nextBatch(): Promise<any> {
       if (index < array.length) {
         const batch = array.slice(index, index + batchSize);
@@ -91,12 +91,10 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
             axios.post(`/api/items/upload/${endpoint}`, { item })
           )
         ).then((res) => {
-          console.log(res);
-          if (res[0].data.message === "Item Created") newItem++;
+          setProcessed((prev) => prev + 1);
           return nextBatch();
         });
       } else {
-        setCreated(newItem);
         return Promise.resolve();
       }
     }
@@ -120,7 +118,7 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
       .then((resArray) => {
         console.log("items uploaded", resArray);
         setUploading(false);
-        router.push(`/admin/products?newItem=${created}`);
+        router.push(`/admin/products?newItem=${processed}`);
         router.refresh();
       })
       .catch((err) => {
@@ -145,22 +143,42 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
       <div className="flex gap-x-4">
         <input type="file" onChange={handleFileUpload} accept=".xlsx,.xls" />
         {/* Optionally display processed items */}
-        Total: {processedItems.length}
+        {`Total: ${processedItems.length}`}
         {processedItems.length > 0 && (
           <button
             className="btn btn-sm"
             onClick={(e) => handleUpload()}
             disabled={uploading}
           >
-            {uploading ? "UPLOADING..." : "UPLOAD"}
+            {uploading ? (
+              <span>
+                <Spinner />
+                &nbsp;Uploading
+              </span>
+            ) : (
+              "Upload"
+            )}
           </button>
         )}
         <button
-          className="btn btn-error btn-sm text-white"
+          className="btn btn-error btn-sm text-white hidden"
           onClick={() => handleInitInventory()}
         >
           INIT INVENTORY
         </button>
+        <div className="flex-row">
+          <div className="p-0 m-0">
+            <progress
+              className="progress progress-success w-56 pt-0 mt-0"
+              value={processed}
+              max={processedItems.length}
+            ></progress>
+            &nbsp;{" "}
+            <span className="text-xs italic">
+              {processed}/{processedItems.length}
+            </span>
+          </div>
+        </div>
       </div>
       <table className="table table-xs mt-8 w-[900px]">
         <thead>
