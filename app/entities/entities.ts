@@ -91,6 +91,7 @@ export interface ItemDetails {
   supplierId?: number;
   brandId?: number;
   unitId?: number;
+  quantity?: number;
 }
 
 interface Srp {

@@ -20,7 +20,6 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
   const [itemsPerPage, setItemsPerPage] = useState(15);
   const [newBrands, setNewBrands] = useState<string[]>([]);
   const [newSuppliers, setNewSuppliers] = useState<string[]>([]);
-  const [statusMessage, setStatusMessage] = useState<string>("");
   const [uploading, setUploading] = useState<boolean>(false);
 
   const [updated, setUpdated] = useState<number>(0);
@@ -80,7 +79,7 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
     reader.readAsBinaryString(file);
   };
 
-  const batchProcess = (array: any[], batchSize: number) => {
+  const batchProcess = (array: any[], batchSize: number, endpoint: string) => {
     let index = 0;
     let newItem = 0;
     function nextBatch(): Promise<any> {
@@ -88,9 +87,11 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
         const batch = array.slice(index, index + batchSize);
         index += batchSize;
         return Promise.all(
-          batch.map((item) => axios.post("/api/items/upload/items", { item }))
+          batch.map((item) =>
+            axios.post(`/api/items/upload/${endpoint}`, { item })
+          )
         ).then((res) => {
-          console.log(res[0].data.message);
+          console.log(res);
           if (res[0].data.message === "Item Created") newItem++;
           return nextBatch();
         });
@@ -105,7 +106,6 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
 
   const handleUpload = () => {
     // upload new brands
-    setStatusMessage("Uploading new brands");
     setUploading(true);
     axios
       .post("/api/items/upload/brands", { newBrands }) // UPLOADS NEW BRANDS IF ANY
@@ -115,7 +115,7 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
       })
       .then((res) => {
         console.log("suppliers", res);
-        return batchProcess(processedItems, 1);
+        return batchProcess(processedItems, 1, "items");
       })
       .then((resArray) => {
         console.log("items uploaded", resArray);
@@ -125,6 +125,17 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
       })
       .catch((err) => {
         console.error(err);
+        setUploading(false);
+      });
+  };
+
+  const handleInitInventory = () => {
+    setUploading(true);
+    batchProcess(processedItems, 1, "inventory")
+      .then((res) => {
+        console.log(res);
+      })
+      .finally(() => {
         setUploading(false);
       });
   };
@@ -144,6 +155,12 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
             {uploading ? "UPLOADING..." : "UPLOAD"}
           </button>
         )}
+        <button
+          className="btn btn-error btn-sm text-white"
+          onClick={() => handleInitInventory()}
+        >
+          INIT INVENTORY
+        </button>
       </div>
       <table className="table table-xs mt-8 w-[900px]">
         <thead>
@@ -156,6 +173,7 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
             <th align="right" className="w-[15%]">
               Store Price
             </th>
+            <th>Quantity</th>
           </tr>
         </thead>
         <tbody>
@@ -188,6 +206,7 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
                     )
                   )}
                 </td>
+                <td align="center">{item.quantity}</td>
               </tr>
             ))}
         </tbody>

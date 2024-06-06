@@ -10,24 +10,16 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const itemInventory = await prisma.inventory.findMany({
+    const item = await prisma.items.findUnique({
       where: {
-        itemId: parseInt(id),
+        id: parseInt(id),
       },
-      orderBy: {
-        createdAt: "desc", // Order by `createdAt` in descending order
-      },
-      take: 1,
-      include: {
-        item: {
-          select: {
-            store: true,
-          },
-        },
+      select: {
+        store: true,
       },
     });
 
-    return NextResponse.json(itemInventory);
+    return NextResponse.json(item);
   } catch (error) {
     // Handle any other errors
     return new Response("Error fetching inventory item", { status: 500 });

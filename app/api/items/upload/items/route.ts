@@ -43,6 +43,7 @@ export async function POST(request: NextRequest) {
       desc3: body.item.description.desc3
         ? body.item.description.desc3.trim()
         : "",
+      unitId: body.item.unitId,
     },
   });
 

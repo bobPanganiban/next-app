@@ -21,19 +21,33 @@ export async function POST(request: NextRequest) {
         },
       },
       orderBy: {
-        invoiceNumber: "desc",
+        dateCreated: "desc",
       },
     });
 
     if (!lastInvoice) {
-      body.invoiceNumber = `${body.invoiceNumber}00001`;
+      body.invoiceNumber = `${body.invoiceNumber}001`;
     } else {
-      const lastNumber =
-        parseInt(lastInvoice.invoiceNumber.replace(body.invoiceNumber, "")) + 1;
+      let lastNumber = parseInt(
+        lastInvoice.invoiceNumber.replace(body.invoiceNumber, "")
+      );
+      if (lastNumber === 200) {
+        lastNumber = 1;
+      } else {
+        lastNumber++;
+      }
       body.invoiceNumber = `${body.invoiceNumber}${lastNumber
         .toString()
-        .padStart(5, "0")}`;
+        .padStart(3, "0")}`;
+
+      await prisma.customerInvoices.deleteMany({
+        where: {
+          invoiceNumber: body.invoiceNumber,
+        },
+      });
     }
+
+    // find invoice number and
   } else {
     return NextResponse.json(
       { message: "Invoice Creation Failed" },

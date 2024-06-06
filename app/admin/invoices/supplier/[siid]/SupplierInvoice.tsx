@@ -3,10 +3,15 @@ import React, { useState } from "react";
 import InvoiceHeader from "./InvoiceHeader";
 import { useCurrency } from "@/app/hooks/useCurrency";
 import { downloadPDF } from "@/app/utils/downloadPdf";
+import { useSession } from "next-auth/react";
+import { useUserProfile } from "@/app/hooks/useUserProfile";
 
 const SupplierInvoice = ({ invoice }: { invoice: any }) => {
   const [loader, setLoader] = useState(false);
   const formatCurrency = useCurrency();
+  const { data: user } = useSession();
+  const { data: userProfile } = useUserProfile(user?.user?.email || "");
+
   return (
     <div>
       <button

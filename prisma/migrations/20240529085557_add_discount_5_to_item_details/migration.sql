@@ -1,2 +1,0 @@
--- AlterTable
-ALTER TABLE `items` ADD COLUMN `discount5` DOUBLE NOT NULL DEFAULT 0.0;

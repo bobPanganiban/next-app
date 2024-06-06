@@ -58,12 +58,7 @@ const ItemsTable = ({ items, sid = "0", warehouses }: Props) => {
     if (selectedItem) {
       setPriceLoading(true);
       axios.get(`/api/inventory?id=${selectedItem}`).then((response) => {
-        if (response.data.length > 0) {
-          console.log(response);
-          setValue("price", response.data[0].item.store);
-        } else {
-          // do nothing
-        }
+        setValue("price", response.data.store);
         setPriceLoading(false);
       });
     }
