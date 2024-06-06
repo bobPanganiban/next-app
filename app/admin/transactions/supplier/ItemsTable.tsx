@@ -39,6 +39,7 @@ const ItemsTable = ({ items, sid = "0", warehouses }: Props) => {
   const [selectedItems, setSelectedItems] = useState<Item[]>([]);
   const [selectedWarehouse, setSelectedWarehouse] = useState<number>(1);
   const [localItems, setLocalItems] = useState(items);
+  const [localItemFilter, setLocalItemFilter] = useState<string>("");
   const [invoiceDate, setInvoiceDate] = useState<string>("");
   const [invoiceNumber, setInvoiceNumber] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
@@ -172,7 +173,7 @@ const ItemsTable = ({ items, sid = "0", warehouses }: Props) => {
           </label>
         </div>
       </div>
-      <table className="table table-xs mt-4 w-[900px]">
+      <table className="table table-xs mt-4 mb-4 w-[900px]">
         <thead>
           <tr>
             <th className="w-[10%]">Qty</th>
@@ -204,7 +205,18 @@ const ItemsTable = ({ items, sid = "0", warehouses }: Props) => {
           - - - No Invoice Items - - -
         </div>
       )}
-      <div className="pt-8 w-[900px]">
+      <div className="pt-2 w-[900px] border-t-2 border-t-gray-400">
+        <div className="mt-2 mb-2">
+          <span className="text-xs w-[10%] inline-block italic">
+            Filter/Search:
+          </span>
+          <input
+            type="text"
+            className="ml-2 input input-xs input-bordered w-[40%]"
+            value={localItemFilter}
+            onChange={(e) => setLocalItemFilter(e.target.value)}
+          />
+        </div>
         <form onSubmit={handleAddItem} name="item" className="flex gap-2">
           <div className="w-[10%]">
             <input
@@ -220,12 +232,25 @@ const ItemsTable = ({ items, sid = "0", warehouses }: Props) => {
               {...register("item", { required: true })}
             >
               <option value=""></option>
-              {localItems?.map((item) => (
-                <option
-                  key={item.id}
-                  value={item.id}
-                >{`${item.brand.name} - ${item.desc1} ${item.desc2} ${item.desc3}`}</option>
-              ))}
+              {localItems
+                ?.filter((item) => {
+                  if (localItemFilter === "") return true;
+                  if (
+                    `${item.brand.name} - ${item.desc1} ${item.desc2} ${item.desc3}`.includes(
+                      localItemFilter.toUpperCase()
+                    )
+                  ) {
+                    return true;
+                  }
+
+                  return false;
+                })
+                .map((item) => (
+                  <option
+                    key={item.id}
+                    value={item.id}
+                  >{`${item.brand.name} - ${item.desc1} ${item.desc2} ${item.desc3}`}</option>
+                ))}
             </select>
           </div>
           <div className="w-[15%]">

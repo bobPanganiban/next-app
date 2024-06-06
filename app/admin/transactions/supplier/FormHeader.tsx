@@ -1,5 +1,5 @@
 "use client";
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 
 interface Props {
@@ -15,10 +15,14 @@ export interface Supplier {
 
 const FormHeader = ({ suppliers }: Props) => {
   const router = useRouter();
+  const [selectedSupplier, setSelectedSupplier] = useState<number>(
+    suppliers[1].id
+  );
 
   const handlerSupplierSelect = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
+    setSelectedSupplier(parseInt(event.target.value));
     router.push(`/admin/transactions/supplier?s=${event.target.value}`);
     router.refresh();
   };
@@ -28,6 +32,7 @@ const FormHeader = ({ suppliers }: Props) => {
       <select
         onChange={(event) => handlerSupplierSelect(event)}
         className="select select-bordered select-sm w-full max-w-xs"
+        value={selectedSupplier}
       >
         {suppliers.map((supplier) => (
           <option key={supplier.id} value={supplier.id}>
