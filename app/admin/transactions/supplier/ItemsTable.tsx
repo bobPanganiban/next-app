@@ -257,7 +257,7 @@ const ItemsTable = ({ items, sid = "0", warehouses }: Props) => {
             <input
               className="input input-bordered w-full input-sm max-w-xs"
               type="text"
-              disabled={true}
+              readOnly
               {...register("price", { required: true })}
             />
           </div>
