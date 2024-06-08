@@ -12,6 +12,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(validation.error.format(), { status: 400 });
   }
 
+  if (customer.id === 1) {
+    body.invoiceNumber = "BOD";
+  }
+
   // set invoice number
   if (body.invoiceNumber) {
     const lastInvoice = await prisma.customerInvoices.findFirst({

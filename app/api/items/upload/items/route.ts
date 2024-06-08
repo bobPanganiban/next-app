@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
         ? body.item.description.desc3.trim()
         : "",
       unitId: body.item.unitId,
+      supplierId: supplier?.id,
     },
   });
 

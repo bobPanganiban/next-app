@@ -34,7 +34,7 @@ const SupplierInvoice = ({ invoice }: { invoice: any }) => {
             date={invoice.invoiceDate}
           />
         </div>
-        <div className="border-b-2 border-gray-800 h-[275px]">
+        <div className="border-b-2 border-gray-800 min-h-[275px]">
           <table className="table table-xs">
             <thead>
               <tr className="border-b-transparent">
