@@ -33,7 +33,7 @@ const SupplierPage = async ({ searchParams: { s } }: Props) => {
       <FormHeader suppliers={suppliers} />
       <ItemsTable
         items={items as Item[]}
-        sid={s ? s : suppliers[0].id.toString()}
+        sid={s ? s : suppliers[1].id.toString()}
         warehouses={warehouses as Warehouse[]}
       />
     </>

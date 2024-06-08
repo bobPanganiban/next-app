@@ -45,6 +45,9 @@ const ItemsTable = ({ items, sid = "0", warehouses }: Props) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [priceLoading, setPriceLoading] = useState<boolean>(false);
 
+  const [showError, setShowError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
   const { register, handleSubmit, reset, setValue, watch } = useForm();
   const formatCurrency = useCurrency();
   const selectedItem = watch("item");
@@ -100,6 +103,18 @@ const ItemsTable = ({ items, sid = "0", warehouses }: Props) => {
 
   const handleCreateInvoice = () => {
     setLoading(true);
+    if (!invoiceDate || !invoiceNumber) {
+      setLoading(false);
+      setErrorMessage("Invoice date or Invoice number is missing");
+      setShowError(true);
+
+      setTimeout(() => {
+        setErrorMessage("");
+        setShowError(false);
+      }, 3000);
+      return;
+    }
+
     let body = {
       supplierId: parseInt(sid),
       warehouseId: selectedWarehouse,
@@ -221,8 +236,12 @@ const ItemsTable = ({ items, sid = "0", warehouses }: Props) => {
           <div className="w-[10%]">
             <input
               className="input input-bordered w-full input-sm max-w-xs"
-              type="text"
-              {...register("qty", { required: true, valueAsNumber: true })}
+              type="number"
+              {...register("qty", {
+                required: true,
+                valueAsNumber: true,
+                min: 1,
+              })}
             />
           </div>
           <div className="w-[60%]">
@@ -283,6 +302,12 @@ const ItemsTable = ({ items, sid = "0", warehouses }: Props) => {
             "Create"
           )}
         </button>
+        &nbsp;&nbsp;&nbsp;
+        {showError && (
+          <span className="text-red-800 text-xs italic inline-block border border-red-800 p-2 bg-red-200 rounded-lg">
+            {errorMessage}
+          </span>
+        )}
       </div>
     </div>
   );
