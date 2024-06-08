@@ -40,9 +40,7 @@ export async function POST(request: NextRequest) {
         count: parseInt(body.item.quantity),
         itemId: item.id,
         warehouseId: 1,
-        price: parseFloat(
-          body.item.srpAndDiscount.unitPrice.replaceAll(",", "")
-        ),
+        price: parseFloat(body.item.customerPrice.ib.replaceAll(",", "")),
       },
     });
     if (newInventory) {

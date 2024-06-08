@@ -161,7 +161,7 @@ const ItemsTable = ({ suppliers, brands }: Props) => {
           </button>
         )}
         <button
-          className="btn btn-error btn-sm text-white hidden"
+          className="btn btn-error btn-sm text-white"
           onClick={() => handleInitInventory()}
         >
           INIT INVENTORY
