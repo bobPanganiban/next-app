@@ -37,6 +37,9 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
   const [selectedItem, setSelectedItem] = useState<Item>({} as Item);
   const [selectedBrand, setSelectedBrand] = useState<number>(0);
   const [isSpecialPrice, setIsSpecialPrice] = useState<boolean>(false);
+  const [showNoStock, setShowNoStock] = useState<boolean>(true);
+  const [itemFilter, setItemFilter] = useState<string>("");
+
   const { register, handleSubmit, reset: resetItemSelect } = useForm();
   const { data: brands, isLoading: brandsLoading } = useBrands();
   const { data: items, isLoading: itemsLoading } = useItems();
@@ -55,6 +58,7 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
   const handleSelectBrand = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedItem({} as Item);
     setSelectedBrand(parseInt(e.target.value));
+    setItemFilter("");
     resetItemSelect();
   };
 
@@ -79,7 +83,7 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
       }),
       isSpecialPrice: isSpecialPrice,
       supplied:
-        selectedItem.inventoryCount > parseInt(data.quantity)
+        selectedItem.inventoryCount >= parseInt(data.quantity)
           ? "ALL"
           : "PARTIAL",
     };
@@ -159,7 +163,7 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
                     <div className="form-control">
                       <label className="label cursor-pointer">
                         <input
-                          name="fullfilled"
+                          name={`fullfilled_${index}`}
                           value={"TO_FOLLOW"}
                           type="radio"
                           className="radio radio-sm"
@@ -180,7 +184,7 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
                     <div className="form-control">
                       <label className="label cursor-pointer">
                         <input
-                          name="fullfilled"
+                          name={`fullfilled_${index}`}
                           type="radio"
                           value={"PARTIAL"}
                           className="radio radio-sm"
@@ -214,7 +218,7 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
       )}
       <div>
         <form
-          className="mt-8 border-t-[1px] border-t-gray-800 flex gap-x-2 w-[900px]"
+          className="mt-4 border-t-[1px] border-t-gray-800 flex gap-x-2 w-[900px]"
           onSubmit={handleAddItem}
         >
           <div className="w-[20%]">
@@ -239,8 +243,21 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
           </div>
           <div className="w-[48%]">
             <label className="form-control w-full">
-              <div className="label">
+              <div className="label mb-[-4px]">
                 <span className="label-text">Item</span>
+                <input
+                  type="text"
+                  className="input input-bordered input-xs w-[60%]"
+                  value={itemFilter}
+                  onChange={(e) => setItemFilter(e.target.value)}
+                />
+                <span className="text-xs inline-block">Show no stock?</span>
+                <input
+                  type="checkbox"
+                  className="checkbox checkbox-xs"
+                  checked={showNoStock}
+                  onChange={(e) => setShowNoStock(e.target.checked)}
+                />
               </div>
               <select
                 className="select select-bordered select-sm w-full"
@@ -250,23 +267,35 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
                 <option value="0" disabled></option>
                 {items?.data
                   .filter((item: any) => {
-                    if (
-                      selectedItems.some(
-                        (formItem: ItemFormEntry) =>
-                          item["id"] === formItem.itemId
-                      )
-                    ) {
-                      return false;
-                    }
-                    if (selectedBrand === 0) return true;
-                    if (selectedBrand === item.brandId) return true;
-                    return false;
+                    let itemSelected,
+                      brandSelected,
+                      allBrandSelected,
+                      filteredItem;
+
+                    itemSelected = selectedItems.some(
+                      (formItem: ItemFormEntry) =>
+                        item["id"] === formItem.itemId
+                    );
+
+                    brandSelected = selectedBrand === item.brandId;
+                    allBrandSelected = selectedBrand === 0;
+                    filteredItem =
+                      `${item.brand.name} - ${item.desc1} ${item.desc2} ${item.desc3}`
+                        .toUpperCase()
+                        .includes(itemFilter.toUpperCase());
+
+                    return (
+                      !itemSelected &&
+                      (brandSelected || allBrandSelected) &&
+                      filteredItem
+                    );
                   })
                   .map((item: any) => (
                     <option
                       value={item.id}
                       key={item.id}
                       disabled={item.inventoryCount === 0}
+                      hidden={!showNoStock && item.inventoryCount === 0}
                     >
                       {`${item.desc1} ${item.desc2} ${item.desc3}`}{" "}
                       {item.inventoryCount > 0 ? (
@@ -326,21 +355,24 @@ const CustomerItemTable = ({ onSave, prefix, loading = false }: Props) => {
                       INT - {selectedItem?.store}
                     </option>
                   )}
-                  {selectedItem?.cal1 && prefix === "CAL" && (
-                    <option value={selectedItem?.cal1}>
-                      CAL1 - {selectedItem?.cal1}
-                    </option>
-                  )}
-                  {selectedItem?.cal2 && prefix === "CAL" && (
-                    <option value={selectedItem?.cal2}>
-                      CAL2 - {selectedItem?.cal2}
-                    </option>
-                  )}
-                  {selectedItem?.cal3 && prefix === "CAL" && (
-                    <option value={selectedItem?.cal3}>
-                      CAL3 - {selectedItem?.cal3}
-                    </option>
-                  )}
+                  {selectedItem?.cal1 &&
+                    (prefix === "CAL" || prefix === "W") && (
+                      <option value={selectedItem?.cal1}>
+                        CAL1 - {selectedItem?.cal1}
+                      </option>
+                    )}
+                  {selectedItem?.cal2 &&
+                    (prefix === "CAL" || prefix === "W") && (
+                      <option value={selectedItem?.cal2}>
+                        CAL2 - {selectedItem?.cal2}
+                      </option>
+                    )}
+                  {selectedItem?.cal3 &&
+                    (prefix === "CAL" || prefix === "W") && (
+                      <option value={selectedItem?.cal3}>
+                        CAL3 - {selectedItem?.cal3}
+                      </option>
+                    )}
                   {selectedItem?.ws1 && prefix === "W" && (
                     <option value={selectedItem?.ws1}>
                       W1 - {selectedItem?.ws1}

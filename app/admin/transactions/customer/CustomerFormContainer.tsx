@@ -127,7 +127,7 @@ const CustomerFormContainer = ({ customers, terms }: Props) => {
           <div>
             <label className="form-control w-full max-w-xs">
               <div className="label">
-                <span className="label-text">Price Group:</span>
+                <span className="label-text">Customer Type:</span>
               </div>
               <select
                 className="select select-bordered select-sm w-full max-w-xs"
@@ -138,7 +138,7 @@ const CustomerFormContainer = ({ customers, terms }: Props) => {
               >
                 <option value="INT">Interbranch</option>
                 <option value="CAL">Caloocan</option>
-                <option value="W">Warehouse</option>
+                <option value="W">Wholesale</option>
               </select>
             </label>
           </div>
