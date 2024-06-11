@@ -129,7 +129,6 @@ model Inventory {
   updatedAt             DateTime                @updatedAt
   warehouse             Warehouses              @relation(fields: [warehouseId], references: [id], onDelete: Cascade)
   item                  Items                   @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  SupplierTransactions  SupplierTransactions[]
   WarehouseTransactions WarehouseTransactions[]
 }
 
@@ -162,14 +161,12 @@ model Terms {
 
 // Supplier Transactions
 model SupplierTransactions {
-  id          Int              @id @default(autoincrement())
-  invoiceId   Int
-  itemId      Int
-  quantity    Int
-  inventoryId Int
-  inventory   Inventory        @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
-  item        Items            @relation(fields: [itemId], references: [id], onDelete: Cascade)
-  invoice     SupplierInvoices @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  id        Int              @id @default(autoincrement())
+  invoiceId Int
+  itemId    Int
+  quantity  Int
+  item      Items            @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  invoice   SupplierInvoices @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 }
 
 model SupplierInvoices {

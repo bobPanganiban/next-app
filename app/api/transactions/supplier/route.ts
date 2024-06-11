@@ -62,7 +62,6 @@ export async function POST(request: NextRequest) {
           invoiceId: invoiceData.id,
           quantity: parseInt(item.qty),
           itemId: item.id,
-          inventoryId: inventoryId,
         },
       });
     }
