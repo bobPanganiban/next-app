@@ -16,16 +16,12 @@ export const supplierInvoiceQuery = (siid: string) => {
               desc1: true,
               desc2: true,
               desc3: true,
+              store: true,
               brand: {
                 select: {
                   name: true,
                 },
               },
-            },
-          },
-          inventory: {
-            select: {
-              price: true,
             },
           },
         },
