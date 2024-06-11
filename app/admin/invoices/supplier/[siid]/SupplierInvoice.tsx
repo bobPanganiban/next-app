@@ -55,11 +55,11 @@ const SupplierInvoice = ({ invoice }: { invoice: any }) => {
                     {transaction.item.desc3}
                   </td>
                   <td align="right">
-                    {formatCurrency(transaction.inventory.price)}
+                    {formatCurrency(transaction.item.store)}
                   </td>
                   <td align="right">
                     {formatCurrency(
-                      transaction.quantity * transaction.inventory.price
+                      transaction.quantity * transaction.item.store
                     )}
                   </td>
                 </tr>
