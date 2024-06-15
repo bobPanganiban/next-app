@@ -6,7 +6,7 @@
     "dev": "next dev",
     "build-g": "npx prisma db push && npx prisma generate && next build",
     "build": "next build",
-    "start": "next start",
+    "start": "next build && next start",
     "lint": "next lint",
     "preview-email": "email dev -p 3030"
   },
