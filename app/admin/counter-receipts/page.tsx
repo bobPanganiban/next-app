@@ -9,6 +9,9 @@ const CounterReceiptsPage = async () => {
       Customers: true,
       CustomerInvoices: true,
     },
+    orderBy: {
+      dateCreated: "desc",
+    },
   });
 
   return (

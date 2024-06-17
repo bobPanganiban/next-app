@@ -9,6 +9,9 @@ const CheckVoucherPage = async () => {
       Supplier: true,
       SupplierInvoices: true,
     },
+    orderBy: {
+      dateCreated: "desc",
+    },
   });
   return (
     <div className="w-[950px]">

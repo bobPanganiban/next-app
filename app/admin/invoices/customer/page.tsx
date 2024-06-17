@@ -8,6 +8,9 @@ const CustomerInvoicesPage = async () => {
     include: {
       customer: true,
     },
+    orderBy: {
+      invoiceDate: "desc",
+    },
   });
 
   return (

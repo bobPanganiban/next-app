@@ -16,8 +16,10 @@ const CustomerInvoicesTable = ({ customerInvoices }: Props) => {
   const [itemPerPage, setItemPerPage] = useState<number>(10);
   const [invoiceSearch, setInvoiceSearch] = useState<string>("");
   const [showCompleted, setShowCompleted] = useState<boolean>(false);
+  const [totalPages, setTotalPages] = useState<number>(
+    Math.ceil(customerInvoices.length / itemPerPage)
+  );
   const formatCurrency = useCurrency();
-  const TotalPages = Math.ceil(customerInvoices.length / itemPerPage);
 
   const { status, data: session } = useSession();
   const user = useUserProfile(session?.user?.email || "");
@@ -79,6 +81,7 @@ const CustomerInvoicesTable = ({ customerInvoices }: Props) => {
                 if (paginated && search && show) {
                   acc.push(invoice);
                 }
+
                 return acc;
               },
               [] as CustomerInvoice[]
@@ -119,11 +122,13 @@ const CustomerInvoicesTable = ({ customerInvoices }: Props) => {
         >
           «
         </button>
-        <button className="join-item btn btn-xs">Page {page}</button>
+        <button className="join-item btn btn-xs">
+          Page {page} of {totalPages}
+        </button>
         <button
           className="join-item btn btn-xs"
           onClick={() => setPage((page) => page + 1)}
-          disabled={page === TotalPages}
+          disabled={page === totalPages}
         >
           »
         </button>
