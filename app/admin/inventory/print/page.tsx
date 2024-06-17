@@ -9,6 +9,7 @@ const InventoryPrintPage = async () => {
       desc1: true,
       desc2: true,
       desc3: true,
+      brandId: true,
       supplierId: true,
       inventories: {
         select: {

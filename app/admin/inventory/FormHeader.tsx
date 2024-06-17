@@ -1,32 +1,33 @@
 "use client";
-import React from "react";
-import { Supplier } from "../transactions/supplier/FormHeader";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Brand } from "@/app/entities/entities";
 
 interface Props {
-  suppliers: Supplier[];
+  brands: Brand[];
 }
 
-const FormHeader = ({ suppliers }: Props) => {
+const FormHeader = ({ brands }: Props) => {
   const router = useRouter();
+  const [brandId, setBrandId] = useState<string>();
 
-  const handlerSupplierSelect = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    router.push(`/admin/inventory?s=${event.target.value}`);
+  const handlerFilterUpdate = () => {
+    router.push(`/admin/inventory?b=${brandId}`);
     router.refresh();
   };
 
   return (
-    <div className="flex mb-2">
+    <div className="flex mb-2 gap-x-7">
       <select
-        onChange={(event) => handlerSupplierSelect(event)}
-        className="select select-bordered select-xs w-full max-w-xs"
+        onChange={(e) => {
+          setBrandId(e.target.value);
+        }}
+        className="select select-bordered select-xs w-full max-w-xs print:hidden"
       >
         <option value={0}>ALL</option>
-        {suppliers.map((supplier) => (
-          <option key={supplier.id} value={supplier.id}>
-            {supplier.name}
+        {brands.map((brand) => (
+          <option key={brand.id} value={brand.id}>
+            {brand.name}
           </option>
         ))}
       </select>

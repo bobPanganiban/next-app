@@ -158,6 +158,7 @@ export interface ItemInventory {
   desc2: string;
   desc3: string;
   brand: Brand;
+  brandId: number;
   supplierId: number;
   inventories: {
     warehouseId: number;
@@ -220,4 +221,9 @@ interface Inventory {
       name: string;
     };
   };
+}
+
+export interface Brand {
+  id: number;
+  name: string;
 }

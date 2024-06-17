@@ -1,17 +1,13 @@
 import React from "react";
 import { prisma } from "@/prisma/client";
-import FormHeader from "./FormHeader";
 import InventoriesTable from "./InventoriesTable";
-import Link from "next/link";
-import { FaPrint } from "react-icons/fa";
-
 interface Props {
-  searchParams: { s: string };
+  searchParams: { b: string; wso?: string; siw?: string };
 }
 
-const InventoryPage = async ({ searchParams: { s } }: Props) => {
+const InventoryPage = async ({ searchParams: { b, wso, siw } }: Props) => {
   // dropdown for supplier
-  const suppliers = await prisma.suppliers.findMany();
+  const brands = await prisma.brands.findMany({ orderBy: { name: "asc" } });
   const allInventories = await prisma.items.findMany({
     select: {
       id: true,
@@ -20,6 +16,7 @@ const InventoryPage = async ({ searchParams: { s } }: Props) => {
       desc2: true,
       desc3: true,
       supplierId: true,
+      brandId: true,
       inventories: {
         select: {
           warehouseId: true,
@@ -28,6 +25,12 @@ const InventoryPage = async ({ searchParams: { s } }: Props) => {
         },
       },
     },
+    orderBy: [
+      { brandId: "asc" },
+      { desc1: "asc" },
+      { desc2: "asc" },
+      { desc3: "asc" },
+    ],
   });
 
   // on supplier select (default supplier is 1)
@@ -39,18 +42,11 @@ const InventoryPage = async ({ searchParams: { s } }: Props) => {
     <div className="flex-row max-w-[950px]">
       <div className="flex justify-between">
         <div className="mb-4 text-lg font-bold text-gray-800">
-          Inventory Page
+          Inventory <span>as of {new Date().toLocaleDateString()}</span>
         </div>
-        <Link href="/admin/inventory/print">
-          <FaPrint className="text-gray-700 text-3xl" />
-        </Link>
       </div>
-      <FormHeader suppliers={suppliers} />
       <div>
-        <InventoriesTable
-          itemInventories={allInventories}
-          supplierId={parseInt(s)}
-        />
+        <InventoriesTable itemInventories={allInventories} brands={brands} />
       </div>
     </div>
   );

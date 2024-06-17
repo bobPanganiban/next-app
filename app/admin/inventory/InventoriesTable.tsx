@@ -1,19 +1,21 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { ItemInventory } from "@/app/entities/entities";
+import { Brand, ItemInventory } from "@/app/entities/entities";
 import { useCurrency } from "@/app/hooks/useCurrency";
+import { FaPrint } from "react-icons/fa";
 
 interface Props {
   itemInventories: ItemInventory[];
-  supplierId?: number;
+  brands: Brand[];
 }
 
-const InventoriesTable = ({ itemInventories, supplierId }: Props) => {
+const InventoriesTable = ({ itemInventories, brands }: Props) => {
   const formatCurrency = useCurrency();
-  const [page, setPage] = useState<number>(1);
+  const [searchString, setSearchString] = useState<string>("");
+  const [brandId, setBrandId] = useState<number>(0);
+  const [showWithStockOnly, setShowWithStockOnly] = useState<boolean>(false);
+  const [showItemWorth, setShowItemWorth] = useState<boolean>(false);
   const [inventories, setInventories] = useState<ItemInventory[]>([]);
-  const itemsPerPage = 15;
-  const TotalPages = Math.ceil(inventories.length / itemsPerPage);
 
   const worth = inventories.reduce((acc: number, inventory: ItemInventory) => {
     return (
@@ -28,55 +30,137 @@ const InventoriesTable = ({ itemInventories, supplierId }: Props) => {
   }, 0);
 
   useEffect(() => {
-    setPage(1);
     setInventories(
       itemInventories.reduce(
         (acc: ItemInventory[], inventory: ItemInventory) => {
-          if (
-            !supplierId ||
-            supplierId === 0 ||
-            inventory.supplierId === supplierId
-          ) {
+          let withStock =
+            inventory.inventories.filter((i) => i.count > 0).length > 0;
+
+          let brandSelected =
+            !brandId || brandId === 0 || inventory.brandId === brandId;
+
+          if (brandSelected) {
             acc.push(inventory);
           }
+
           return acc;
         },
         [] as ItemInventory[]
       )
     );
-  }, [supplierId]);
+  }, [brandId]);
+
+  const handlePrint = () => {
+    if (typeof window !== "undefined") {
+      window.print();
+    }
+  };
 
   return (
     <>
+      <div className="flex justify-between mb-2 gap-x-7">
+        <select
+          onChange={(e) => {
+            setBrandId(parseInt(e.target.value));
+          }}
+          className="select select-bordered select-xs w-full max-w-xs print:hidden"
+        >
+          <option value={0}>ALL</option>
+          {brands.map((brand) => (
+            <option key={brand.id} value={brand.id}>
+              {brand.name}
+            </option>
+          ))}
+        </select>
+        <button onClick={(e) => handlePrint()} className="print:hidden">
+          <FaPrint className="text-gray-700" />
+        </button>
+      </div>
       <div className="flex justify-between mb-2">
-        <div className="text-gray-800 text-xl">
-          WORTH: {formatCurrency(worth)}
+        <div className="flex gap-4 print:hidden">
+          <div>
+            <span className="text-xs text-gray-800 italic">Search/Filter:</span>
+            <input
+              type="text"
+              className="input input-xs input-bordered"
+              value={searchString}
+              onChange={(e) => setSearchString(e.target.value)}
+            />
+          </div>
+          <div>
+            <span className="text-xs text-gray-800 italic">
+              Show with stock only
+            </span>
+            <input
+              type="checkbox"
+              className="checkbox checkbox-xs ml-2"
+              checked={showWithStockOnly}
+              onChange={(e) => setShowWithStockOnly(e.target.checked)}
+            />
+          </div>
+          <div>
+            <span className="text-xs text-gray-800 italic">
+              Show item worth
+            </span>
+            <input
+              type="checkbox"
+              className="checkbox checkbox-xs ml-2"
+              checked={showItemWorth}
+              onChange={(e) => setShowItemWorth(e.target.checked)}
+            />
+          </div>
         </div>
+        {showItemWorth && (
+          <div className="text-gray-800 text-xl">
+            WORTH: {formatCurrency(worth)}
+          </div>
+        )}
       </div>
       <div className="min-h-[420px]">
         <table className="table table-xs">
           <thead>
             <tr>
-              <th className="w-[50px]">ID</th>
+              {/* <th className="w-[50px]">ID</th> */}
               <th className="w-[400px]">Item</th>
               <th className="w-[150px]">W1</th>
               <th className="w-[150px]">W2</th>
               <th className="w-[150px]">W3</th>
-              <th className="w-[150px]" align="center">
+              <th className="w-[75px]" align="center">
                 Total
               </th>
+              {showItemWorth && (
+                <th className="w-[125px]" align="right">
+                  Worth
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
             {inventories
-              .filter(
-                (inventory: ItemInventory, index: number) =>
-                  index >= page * itemsPerPage - itemsPerPage &&
-                  index < itemsPerPage * page
-              )
+              .filter((item) => {
+                let withStock =
+                  item.inventories.filter((inv) => inv.count > 0).length > 0;
+                let withSearchString =
+                  `${item.desc1} ${item.desc2} ${item.desc3}`
+                    .toUpperCase()
+                    .includes(searchString.toUpperCase());
+
+                if (
+                  showWithStockOnly &&
+                  withStock &&
+                  (withSearchString || searchString === "")
+                )
+                  return true;
+                if (
+                  !showWithStockOnly &&
+                  (withSearchString || searchString === "")
+                )
+                  return true;
+                return false;
+              })
               .map((item: any, index: number) => (
-                <tr key={index}>
-                  <td className="align-top w-[50px] p-1">{item.id}</td>
+                <tr className="hover" key={index}>
+                  {/* <td className="align-top w-[50px] p-1">{item.id}</td> */}
                   <td className="align-top p-1">{`${item.brand.name} - ${item.desc1} ${item.desc2} ${item.desc3}`}</td>
                   <td className="align-top p-1">
                     {item.inventories.map((inventory: any, i: number) => {
@@ -133,29 +217,21 @@ const InventoriesTable = ({ itemInventories, supplierId }: Props) => {
                       0
                     )}
                   </td>
+                  {showItemWorth && (
+                    <td align="right">
+                      {formatCurrency(
+                        item.inventories.reduce(
+                          (accumulator: number, currentItem: any) =>
+                            accumulator + currentItem.count * currentItem.price,
+                          0
+                        )
+                      )}
+                    </td>
+                  )}
                 </tr>
               ))}
           </tbody>
         </table>
-      </div>
-      <div className="join mt-4">
-        <button
-          className="join-item btn btn-xs"
-          disabled={page === 1}
-          onClick={() => setPage((page) => page - 1)}
-        >
-          «
-        </button>
-        <button className="join-item btn btn-xs">
-          Page {page} of {TotalPages}
-        </button>
-        <button
-          className="join-item btn btn-xs"
-          onClick={() => setPage((page) => page + 1)}
-          disabled={page === TotalPages}
-        >
-          »
-        </button>
       </div>
     </>
   );
